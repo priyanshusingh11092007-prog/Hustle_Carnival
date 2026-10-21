@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>
+        {% block title %}QueueSathi{% endblock %}
+    </title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+
+<body>
+
+<header class="navbar">
+
+    <div class="container nav-content">
+
+        <a href="{{ url_for('customer.index') }}"
+           class="brand">
+            Queue<span>Sathi</span>
+        </a>
+
+        <nav>
+
+            {% if g.student %}
+
+                <!-- STUDENT NAVIGATION -->
+
+                <a href="{{ url_for('customer.dashboard') }}">
+                    My Dashboard
+                </a>
+
+                <a href="{{ url_for('customer.services') }}">
+                    Services
+                </a>
+
+            {% elif g.user %}
+
+                <!-- STAFF NAVIGATION -->
+
+                {% if g.user['role'] == 'STAFF' %}
+
+                    <a href="{{ url_for('staff.dashboard') }}">
+                        Staff Dashboard
+                    </a>
+
+                {% elif g.user['role'] == 'ADMIN' %}
+
+                    <!-- ADMIN NAVIGATION -->
+
+                    <a href="{{ url_for('admin.services') }}">
+                        Manage Services
+                    </a>
+
+                    <a href="{{ url_for('admin.reports') }}">
+                        Reports
+                    </a>
+
+                    <a href="{{ url_for('staff.dashboard') }}">
+                        Queue Overview
+                    </a>
+
+                {% endif %}
+
+            {% else %}
+
+                <!-- PUBLIC NAVIGATION -->
+
+                <a href="{{ url_for('auth.student_login') }}">
+                    Student Login
+                </a>
+
+                <a href="{{ url_for('auth.staff_select') }}">
+                    Staff Login
+                </a>
+
+                <a href="{{ url_for('auth.admin_login') }}">
+                    Admin Login
+                </a>
+
+            {% endif %}
+
+
+            {% if g.student or g.user %}
+
+                <form method="POST"
+                      action="{{ url_for('auth.logout') }}"
+                      class="inline-form">
+
+                    <input type="hidden"
+                           name="csrf_token"
+                           value="{{ csrf_token() }}">
+
+                    <button type="submit"
+                            class="nav-button">
+                        Logout
+                    </button>
+
+                </form>
+
+            {% endif %}
+
+        </nav>
+
+    </div>
+
+</header>
+
+
+<main class="container page-content">
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+
+        {% for category, message in messages %}
+
+            <div class="alert {{ category }}">
+                {{ message }}
+            </div>
+
+        {% endfor %}
+
+    {% endwith %}
+
+    {% block content %}{% endblock %}
+
+</main>
+
+
+<footer class="footer">
+
+    <div class="container">
+        QueueSathi © 2026 |
+        Smart Digital Queue Management System
+    </div>
+
+</footer>
+
+
+{% block scripts %}{% endblock %}
+
+</body>
+
+</html>

@@ -1,0 +1,306 @@
+{% extends "base.html" %}
+
+{% block title %}
+Staff Dashboard | QueueSathi
+{% endblock %}
+
+{% macro action_button(token, action, label) %}
+
+<form
+    method="POST"
+    class="inline-form"
+    action="{{ url_for(
+        'staff.token_action',
+        token_id=token['id'],
+        action=action
+    ) }}"
+>
+
+    <input
+        type="hidden"
+        name="csrf_token"
+        value="{{ csrf_token() }}"
+    >
+
+    <button class="btn btn-small btn-secondary">
+        {{ label }}
+    </button>
+
+</form>
+
+{% endmacro %}
+
+
+{% block content %}
+
+<div class="page-heading">
+
+    <h1>Staff Dashboard</h1>
+
+    {% if g.user['role'] == 'STAFF' %}
+
+        <p>
+            Manage your assigned service queue.
+        </p>
+
+    {% else %}
+
+        <p>
+            Administrator Queue Overview
+        </p>
+
+    {% endif %}
+
+</div>
+
+
+<div class="dashboard-grid">
+
+    <section class="card">
+
+        <h2>Call Next Token</h2>
+
+        <form
+            method="POST"
+            action="{{ url_for('staff.call_next_route') }}"
+        >
+
+            <input
+                type="hidden"
+                name="csrf_token"
+                value="{{ csrf_token() }}"
+            >
+
+            <label>Select Service</label>
+
+            <select name="service_id" required>
+
+                {% for service in services %}
+
+                <option value="{{ service['id'] }}">
+                    {{ service['service_name'] }}
+                </option>
+
+                {% endfor %}
+
+            </select>
+
+            <button class="btn btn-primary">
+                Call Next
+            </button>
+
+        </form>
+
+    </section>
+
+
+    <section class="card">
+
+        <h2>Register Walk-in</h2>
+
+        <form
+            method="POST"
+            action="{{ url_for('staff.walk_in') }}"
+        >
+
+            <input
+                type="hidden"
+                name="csrf_token"
+                value="{{ csrf_token() }}"
+            >
+
+            <label>Select Service</label>
+
+            <select name="service_id" required>
+
+                {% for service in services %}
+
+                    {% if service['is_open'] %}
+
+                    <option value="{{ service['id'] }}">
+                        {{ service['service_name'] }}
+                    </option>
+
+                    {% endif %}
+
+                {% endfor %}
+
+            </select>
+
+            <button class="btn btn-secondary">
+                Add Walk-in
+            </button>
+
+        </form>
+
+    </section>
+
+</div>
+
+
+<section class="card">
+
+    <h2>Active Queue</h2>
+
+    <p class="muted">
+        Tokens are displayed in their actual queue order.
+    </p>
+
+    <div class="table-wrapper">
+
+        <table>
+
+            <thead>
+
+                <tr>
+                    <th>Token</th>
+                    <th>Service</th>
+                    <th>Status</th>
+                    <th>Source</th>
+                    <th>Actions</th>
+                </tr>
+
+            </thead>
+
+            <tbody>
+
+                {% for token in tokens %}
+
+                <tr>
+
+                    <td>
+                        <strong>
+                            {{ token['token_number'] }}
+                        </strong>
+                    </td>
+
+                    <td>
+                        {{ token['service_name'] }}
+                    </td>
+
+                    <td>
+                        <span class="status-badge">
+                            {{ token['status'] }}
+                        </span>
+                    </td>
+
+                    <td>
+                        {{ token['source'] }}
+                    </td>
+
+                    <td class="actions">
+
+                        {% if token['status'] == 'CALLED' %}
+
+                            {{ action_button(
+                                token,
+                                'serve',
+                                'Start Serving'
+                            ) }}
+
+                            <form
+                                method="POST"
+                                class="inline-form"
+                                action="{{ url_for(
+                                    'staff.skip_token_route',
+                                    token_id=token['id']
+                                ) }}"
+                            >
+
+                                <input
+                                    type="hidden"
+                                    name="csrf_token"
+                                    value="{{ csrf_token() }}"
+                                >
+
+                                <button
+                                    class="btn btn-small btn-warning"
+                                >
+                                    Skip Token
+                                </button>
+
+                            </form>
+
+                            {{ action_button(
+                                token,
+                                'no-show',
+                                'No-show'
+                            ) }}
+
+                            {{ action_button(
+                                token,
+                                'cancel',
+                                'Cancel'
+                            ) }}
+
+                        {% elif token['status'] == 'SERVING' %}
+
+                            {{ action_button(
+                                token,
+                                'complete',
+                                'Complete'
+                            ) }}
+
+                            {{ action_button(
+                                token,
+                                'hold',
+                                'Hold'
+                            ) }}
+
+                        {% elif token['status'] == 'HOLD' %}
+
+                            {{ action_button(
+                                token,
+                                'resume',
+                                'Resume Waiting'
+                            ) }}
+
+                            {{ action_button(
+                                token,
+                                'cancel',
+                                'Cancel'
+                            ) }}
+
+                        {% elif token['status'] == 'WAITING' %}
+
+                            {{ action_button(
+                                token,
+                                'cancel',
+                                'Cancel'
+                            ) }}
+
+                        {% endif %}
+
+                    </td>
+
+                </tr>
+
+                {% else %}
+
+                <tr>
+                    <td colspan="5">
+                        No active tokens.
+                    </td>
+                </tr>
+
+                {% endfor %}
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+</section>
+
+{% endblock %}
+
+
+{% block scripts %}
+
+<script src="{{ url_for(
+    'static',
+    filename='js/staff-dashboard.js'
+) }}"></script>
+
+{% endblock %}

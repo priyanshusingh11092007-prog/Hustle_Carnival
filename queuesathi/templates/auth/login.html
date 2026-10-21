@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+
+{% block title %}Staff Login | Ellora{% endblock %}
+
+{% block content %}
+
+<section class="card auth-card">
+
+    <h1>Staff Login</h1>
+
+    <p class="muted">
+        Authorized staff and administrators only.
+    </p>
+
+    <form method="POST">
+
+        <input type="hidden"
+               name="csrf_token"
+               value="{{ csrf_token() }}">
+
+        <label>Username</label>
+
+        <input type="text"
+               name="username"
+               required
+               autocomplete="username">
+
+        <label>Password</label>
+
+        <input type="password"
+               name="password"
+               required
+               autocomplete="current-password">
+
+        <button class="btn btn-primary">
+            Login
+        </button>
+
+    </form>
+
+</section>
+
+{% endblock %}

@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+
+{% block title %}
+{{ service['service_name'] }} Staff Login
+{% endblock %}
+
+{% block content %}
+
+<div class="auth-container">
+
+    <div class="auth-header">
+
+        <h1>
+            {{ service['service_name'] }}
+        </h1>
+
+        <p>
+            Staff Login
+        </p>
+
+    </div>
+
+    <div class="card auth-card">
+
+        <form method="POST">
+
+            <input type="hidden"
+                   name="csrf_token"
+                   value="{{ csrf_token() }}">
+
+            <label>Staff Username</label>
+
+            <input
+                type="text"
+                name="username"
+                autocomplete="username"
+                required
+            >
+
+            <label>Password</label>
+
+            <input
+                type="password"
+                name="password"
+                autocomplete="current-password"
+                required
+            >
+
+            <button class="btn btn-primary auth-button">
+                Login to Dashboard
+            </button>
+
+        </form>
+
+        <p class="auth-footer">
+
+            <a href="{{ url_for('auth.staff_select') }}">
+                ← Choose Another Department
+            </a>
+
+        </p>
+
+    </div>
+
+</div>
+
+{% endblock %}

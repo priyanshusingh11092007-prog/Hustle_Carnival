@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+
+{% block title %}
+Staff Login | QueueSathi
+{% endblock %}
+
+{% block content %}
+
+<div class="page-heading">
+
+    <h1>Staff Login</h1>
+
+    <p>
+        Select your assigned service department.
+    </p>
+
+</div>
+
+<div class="service-grid">
+
+    {% for service in services %}
+
+    <a
+        href="{{ url_for(
+            'auth.staff_login',
+            service_code=service['service_code']
+        ) }}"
+        class="service-card"
+    >
+
+        <div class="service-icon">
+            {{ service['service_code'] }}
+        </div>
+
+        <h3>
+            {{ service['service_name'] }}
+        </h3>
+
+        <p>
+            Login to manage this service queue.
+        </p>
+
+        <span class="service-link">
+            Staff Login →
+        </span>
+
+    </a>
+
+    {% endfor %}
+
+</div>
+
+{% endblock %}

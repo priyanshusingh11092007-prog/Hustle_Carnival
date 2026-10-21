@@ -1,0 +1,89 @@
+{% extends "base.html" %}
+
+{% block title %}
+Student Login | QueueSathi
+{% endblock %}
+
+{% block content %}
+
+<div class="auth-container">
+
+    <div class="auth-header">
+
+        <h1>Welcome to QueueSathi</h1>
+
+        <p>
+            Smart Digital Queue & Waiting-Time Management System
+        </p>
+
+    </div>
+
+    <div class="card auth-card">
+
+        <h2>Student Login</h2>
+
+        <form method="POST"
+              action="{{ url_for('auth.student_login') }}">
+
+            <input type="hidden"
+                   name="csrf_token"
+                   value="{{ csrf_token() }}">
+
+            <label>Username</label>
+
+            <input type="text"
+                   name="username"
+                   placeholder="Enter your username"
+                   autocomplete="username"
+                   required>
+
+            <label>Password</label>
+
+            <input type="password"
+                   name="password"
+                   placeholder="Enter your password"
+                   autocomplete="current-password"
+                   required>
+
+            <button type="submit"
+                    class="btn btn-primary auth-button">
+                Login as Student
+            </button>
+
+        </form>
+
+        <p class="auth-footer">
+
+            Don't have an account?
+
+            <a href="{{ url_for('auth.student_register') }}">
+                Register
+            </a>
+
+        </p>
+
+        <hr class="auth-divider">
+
+        <div class="other-logins">
+
+            <p class="muted">
+                Are you a staff member or administrator?
+            </p>
+
+            <a href="{{ url_for('auth.staff_select') }}"
+               class="btn btn-secondary">
+                Staff Login
+            </a>
+
+            <a href="{{ url_for('auth.admin_login') }}"
+               class="btn btn-secondary">
+                Admin Login
+            </a>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

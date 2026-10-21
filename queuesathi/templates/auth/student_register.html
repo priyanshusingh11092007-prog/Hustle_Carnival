@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+
+{% block title %}
+Student Registration | QueueSathi
+{% endblock %}
+
+{% block content %}
+
+<div class="auth-container">
+
+    <div class="auth-header">
+        <h1>Create Student Account</h1>
+
+        <p>
+            Register to generate and track queue tokens.
+        </p>
+    </div>
+
+    <div class="card auth-card">
+
+        <form method="POST">
+
+            <input type="hidden"
+                   name="csrf_token"
+                   value="{{ csrf_token() }}">
+
+            <label>Username</label>
+
+            <input
+                type="text"
+                name="username"
+                minlength="3"
+                required
+            >
+
+            <label>Password</label>
+
+            <input
+                type="password"
+                name="password"
+                minlength="8"
+                required
+            >
+
+            <label>Confirm Password</label>
+
+            <input
+                type="password"
+                name="confirm_password"
+                minlength="8"
+                required
+            >
+
+            <button class="btn btn-primary auth-button">
+                Create Account
+            </button>
+
+        </form>
+
+        <p class="auth-footer">
+            Already registered?
+
+            <a href="{{ url_for('auth.student_login') }}">
+                Login
+            </a>
+        </p>
+
+    </div>
+
+</div>
+
+{% endblock %}

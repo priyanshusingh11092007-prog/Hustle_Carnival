@@ -1,0 +1,103 @@
+{% extends "base.html" %}
+
+{% block title %}Reports | Ellora{% endblock %}
+
+{% block content %}
+
+<div class="page-heading">
+
+    <h1>Queue Analytics</h1>
+
+    <p>
+        Operational statistics calculated from recorded tokens.
+    </p>
+
+</div>
+
+<section class="stats-grid">
+
+    <div class="stat-box">
+        <span>Total Tokens</span>
+        <strong>{{ stats.total_tokens }}</strong>
+    </div>
+
+    <div class="stat-box">
+        <span>Total Served</span>
+        <strong>{{ stats.total_served }}</strong>
+    </div>
+
+    <div class="stat-box">
+        <span>Currently Waiting</span>
+        <strong>{{ stats.total_waiting }}</strong>
+    </div>
+
+    <div class="stat-box">
+        <span>Cancelled</span>
+        <strong>{{ stats.total_cancelled }}</strong>
+    </div>
+
+    <div class="stat-box">
+        <span>Average Waiting Time</span>
+        <strong>{{ stats.average_wait }} min</strong>
+    </div>
+
+    <div class="stat-box">
+        <span>Average Service Duration</span>
+        <strong>{{ stats.average_service }} min</strong>
+    </div>
+
+    <div class="stat-box">
+        <span>Average Prediction Error</span>
+        <strong>{{ stats.prediction_error }} min</strong>
+    </div>
+
+</section>
+
+<section class="card">
+
+    <h2>Busiest Hours</h2>
+
+    <p class="muted">
+        Hours are shown in UTC.
+    </p>
+
+    <table>
+
+        <thead>
+            <tr>
+                <th>Hour</th>
+                <th>Arrivals</th>
+            </tr>
+        </thead>
+
+        <tbody>
+
+            {% for row in stats.busy_hours %}
+
+            <tr>
+                <td>{{ row['hour'] }}:00</td>
+                <td>{{ row['total'] }}</td>
+            </tr>
+
+            {% else %}
+
+            <tr>
+                <td colspan="2">
+                    No data available.
+                </td>
+            </tr>
+
+            {% endfor %}
+
+        </tbody>
+
+    </table>
+
+    <p class="muted">
+        These statistics describe recorded activity only.
+        They do not prove that waiting time has decreased.
+    </p>
+
+</section>
+
+{% endblock %}

@@ -1,0 +1,148 @@
+{% extends "base.html" %}
+
+{% block title %}
+Track Token | QueueSathi
+{% endblock %}
+
+{% block content %}
+
+<div class="page-heading">
+
+    <h1>Track Your Token</h1>
+
+    <p>
+        Your queue information updates automatically.
+    </p>
+
+</div>
+
+
+<section class="card token-card"
+         id="token-status"
+         data-public-id="{{ token['public_id'] }}">
+
+    <p class="muted">
+        {{ token['service_name'] }}
+    </p>
+
+    <div class="token-number">
+        {{ token['token_number'] }}
+    </div>
+
+    <div class="status-badge"
+         id="status">
+        {{ token['status'] }}
+    </div>
+
+
+    <div class="status-grid">
+
+        <div class="stat-box">
+
+            <span>People Ahead</span>
+
+            <strong id="people-ahead">
+                {{ estimate['people_ahead'] }}
+            </strong>
+
+        </div>
+
+
+        <div class="stat-box">
+
+            <span>Estimated Waiting Time</span>
+
+            <strong id="estimated-wait">
+
+                {% if estimate['estimated_minutes'] is none %}
+
+                    Unavailable
+
+                {% else %}
+
+                    {{ estimate['estimated_minutes'] }} min
+
+                {% endif %}
+
+            </strong>
+
+        </div>
+
+    </div>
+
+
+    <div class="tracking-information">
+
+        <p>
+            Estimate based on:
+
+            <strong id="estimate-source">
+                {{ estimate['estimate_source'] }}
+            </strong>
+        </p>
+
+        <p class="muted">
+            Waiting-time estimates are approximate.
+            Actual times may vary.
+        </p>
+
+        <p class="muted">
+            Last updated:
+
+            <span id="last-updated">
+                Just now
+            </span>
+        </p>
+
+        <p id="refresh-error"
+           class="error-text"
+           role="status"></p>
+
+    </div>
+
+
+    {% if token['status'] == 'WAITING' %}
+
+        <form method="POST"
+              action="{{ url_for(
+                  'customer.cancel_token',
+                  public_id=token['public_id']
+              ) }}">
+
+            <input type="hidden"
+                   name="csrf_token"
+                   value="{{ csrf_token() }}">
+
+            <button type="submit"
+                    class="btn btn-danger"
+                    onclick="return confirm('Are you sure you want to cancel your token?')">
+
+                Cancel Token
+
+            </button>
+
+        </form>
+
+    {% endif %}
+
+
+    <a href="{{ url_for('customer.dashboard') }}"
+       class="btn btn-secondary">
+
+        Back to Dashboard
+
+    </a>
+
+</section>
+
+{% endblock %}
+
+
+{% block scripts %}
+
+<script src="{{ url_for(
+    'static',
+    filename='js/token-status.js'
+) }}"></script>
+
+{% endblock %}

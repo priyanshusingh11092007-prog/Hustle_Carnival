@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<section class="card">
+
+    <h1>Access Denied</h1>
+
+    <p>You do not have permission to access this page.</p>
+
+    <a href="{{ url_for('customer.index') }}"
+       class="btn btn-primary">
+        Return Home
+    </a>
+
+</section>
+
+{% endblock %}

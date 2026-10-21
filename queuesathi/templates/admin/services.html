@@ -1,0 +1,149 @@
+{% extends "base.html" %}
+
+{% block title %}Manage Services | Ellora{% endblock %}
+
+{% block content %}
+
+<div class="page-heading">
+
+    <h1>Service Management</h1>
+
+    <p>
+        Create services and control their availability.
+    </p>
+
+</div>
+
+<section class="card">
+
+    <h2>Add New Service</h2>
+
+    <form method="POST"
+          action="{{ url_for('admin.add_service') }}">
+
+        <input type="hidden"
+               name="csrf_token"
+               value="{{ csrf_token() }}">
+
+        <label>Service Name</label>
+
+        <input name="service_name"
+               placeholder="Library Help Desk"
+               required>
+
+        <label>Service Code</label>
+
+        <input name="service_code"
+               placeholder="LIB"
+               maxlength="10"
+               required>
+
+        <button class="btn btn-primary">
+            Add Service
+        </button>
+
+    </form>
+
+</section>
+
+<section class="card">
+
+    <h2>Existing Services</h2>
+
+    <div class="table-wrapper">
+
+        <table>
+
+            <thead>
+                <tr>
+                    <th>Code</th>
+                    <th>Service</th>
+                    <th>Status</th>
+                    <th>Rename</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+
+            <tbody>
+
+                {% for service in services %}
+
+                <tr>
+
+                    <td>
+                        {{ service['service_code'] }}
+                    </td>
+
+                    <td>
+                        {{ service['service_name'] }}
+                    </td>
+
+                    <td>
+                        {% if service['is_open'] %}
+                            Open
+                        {% else %}
+                            Closed
+                        {% endif %}
+                    </td>
+
+                    <td>
+
+                        <form method="POST"
+                              action="{{ url_for(
+                                  'admin.rename_service',
+                                  service_id=service['id']
+                              ) }}">
+
+                            <input type="hidden"
+                                   name="csrf_token"
+                                   value="{{ csrf_token() }}">
+
+                            <input name="service_name"
+                                   value="{{ service['service_name'] }}"
+                                   required>
+
+                            <button class="btn btn-small">
+                                Save
+                            </button>
+
+                        </form>
+
+                    </td>
+
+                    <td>
+
+                        <form method="POST"
+                              action="{{ url_for(
+                                  'admin.toggle_service',
+                                  service_id=service['id']
+                              ) }}">
+
+                            <input type="hidden"
+                                   name="csrf_token"
+                                   value="{{ csrf_token() }}">
+
+                            <button class="btn btn-small btn-secondary">
+                                {% if service['is_open'] %}
+                                    Close
+                                {% else %}
+                                    Open
+                                {% endif %}
+                            </button>
+
+                        </form>
+
+                    </td>
+
+                </tr>
+
+                {% endfor %}
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+</section>
+
+{% endblock %}

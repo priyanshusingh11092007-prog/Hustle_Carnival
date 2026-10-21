@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<section class="card">
+
+    <h1>Service Unavailable</h1>
+
+    <p>
+        This service is currently closed or unavailable.
+        Please contact the service counter for assistance.
+    </p>
+
+    <a class="btn btn-primary"
+       href="{{ url_for('customer.index') }}">
+        Return Home
+    </a>
+
+</section>
+
+{% endblock %}
