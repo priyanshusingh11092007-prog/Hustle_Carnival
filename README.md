@@ -123,7 +123,7 @@ schema on startup. To create the demo services and administrator account,
 install the Vercel CLI, link the local repository to the Vercel project, and
 run these commands from the repository root:
 
-    vercel env pull .env.vercel
+    vercel env pull .env.vercel --environment=production
     python -c "from dotenv import load_dotenv; load_dotenv('.env.vercel', override=True); from scripts.seed_demo import seed; seed()"
 
 The `.env.vercel` file contains secrets; do not commit it. Vercel's local
