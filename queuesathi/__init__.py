@@ -1,7 +1,8 @@
 import os
+
 import click
 
-from flask import Flask, render_template, redirect, url_for
+from flask import Flask, render_template
 from flask_wtf.csrf import CSRFProtect
 
 from .config import Config
@@ -23,15 +24,24 @@ def create_app(test_config=None):
     if test_config:
         app.config.update(test_config)
 
+    if os.getenv("VERCEL") == "1" and not app.config.get("DATABASE_URL"):
+        raise RuntimeError(
+            "Set DATABASE_URL or POSTGRES_URL to a persistent PostgreSQL "
+            "database on Vercel."
+        )
+
     if not app.config.get("SECRET_KEY"):
         if app.config.get("TESTING"):
             app.config["SECRET_KEY"] = "testing-only-secret"
         else:
             raise RuntimeError(
-                "SECRET_KEY is missing. Configure your .env file."
+                "SECRET_KEY is missing. Set it in .env or in Vercel environment variables."
             )
 
-    os.makedirs(app.instance_path, exist_ok=True)
+    # The instance folder is only needed for local SQLite.
+    # On Vercel the filesystem is read-only, so do not create it there.
+    if not app.config.get("DATABASE_URL"):
+        os.makedirs(app.instance_path, exist_ok=True)
 
     csrf.init_app(app)
 

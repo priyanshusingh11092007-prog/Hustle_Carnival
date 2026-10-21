@@ -12,6 +12,7 @@ def app(tmp_path):
     app = create_app({
         "TESTING": True,
         "DATABASE": str(database),
+        "DATABASE_URL": None,      # never run tests against the live database
         "WTF_CSRF_ENABLED": False
     })
 

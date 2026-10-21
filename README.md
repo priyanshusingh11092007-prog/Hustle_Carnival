@@ -92,6 +92,60 @@ Run:
 
     python -m pytest tests -v
 
+## Deployment
+
+### Render (recommended)
+
+The repository includes a `render.yaml` Blueprint. In Render, create a new
+Blueprint from this repository and provide `ADMIN_USERNAME` and
+`ADMIN_PASSWORD` when prompted. Use an admin password of at least 12
+characters. The Blueprint installs dependencies, initializes the database,
+creates the demo services and admin account, and runs the app with Gunicorn.
+
+The Blueprint provisions a managed PostgreSQL database and wires its
+connection string into the web service, so queue data persists across deploys
+and restarts.
+
+### Vercel
+
+The repository includes a Vercel function and rewrite configuration. Before
+deploying, connect a PostgreSQL database (for example, through Vercel
+Marketplace) and configure these environment variables for the Vercel
+environments you will deploy:
+
+- `DATABASE_URL` or `POSTGRES_URL`: the PostgreSQL connection string.
+- `SECRET_KEY`: a long, random secret.
+- `ADMIN_USERNAME` and `ADMIN_PASSWORD`: the initial administrator
+  credentials. Use a password of at least 12 characters.
+
+Deploy the repository from Vercel. The function initializes the database
+schema on startup. To create the demo services and administrator account,
+install the Vercel CLI, link the local repository to the Vercel project, and
+run these commands from the repository root:
+
+    vercel env pull .env.vercel
+    python -c "from dotenv import load_dotenv; load_dotenv('.env.vercel', override=True); from scripts.seed_demo import seed; seed()"
+
+The `.env.vercel` file contains secrets; do not commit it. Vercel's local
+filesystem is ephemeral, so SQLite is not suitable for deployed queue data.
+Use PostgreSQL by setting one of the connection-string variables above.
+
+### Other WSGI hosts
+
+Install `requirements.txt`, set `SECRET_KEY`, and set either `DATABASE_URL`
+or `POSTGRES_URL` to a PostgreSQL connection string. Set `ADMIN_USERNAME` and
+`ADMIN_PASSWORD` as well. Then initialize and seed the database once:
+
+    flask --app run init-db
+    python scripts/seed_demo.py
+
+Start the production server with:
+
+    gunicorn --bind 0.0.0.0:$PORT run:app
+
+Set `PORT` to the port supplied by your hosting platform. SQLite remains
+available for local development; use PostgreSQL for durable hosted data.
+
 ## Demo
 
 1. Open the customer homepage.

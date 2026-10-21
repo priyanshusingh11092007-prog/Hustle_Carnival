@@ -31,11 +31,12 @@ def seed():
         for name, code in services:
             db.execute(
                 '''
-                INSERT OR IGNORE INTO services (
+                INSERT INTO services (
                     service_name,
                     service_code
                 )
                 VALUES (?, ?)
+                ON CONFLICT DO NOTHING
                 ''',
                 (name, code)
             )

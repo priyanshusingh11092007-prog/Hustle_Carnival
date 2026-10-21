@@ -162,24 +162,25 @@ def student_register():
 
             else:
                 try:
-                    cursor = db.execute(
+                    student_id = db.execute(
                         """
                         INSERT INTO students (
                             username,
                             password_hash
                         )
                         VALUES (?, ?)
+                        RETURNING id
                         """,
                         (
                             username,
                             generate_password_hash(password)
                         )
-                    )
+                    ).fetchone()["id"]
 
                     db.commit()
 
                     session.clear()
-                    session["student_id"] = cursor.lastrowid
+                    session["student_id"] = student_id
 
                     return redirect(
                         url_for("customer.dashboard")
